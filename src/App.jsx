@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes, useLocation,Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import LoginPage from './pages/Login';
 import SignupPage from './pages/Signup';
@@ -11,7 +11,7 @@ import JobPost from './pages/JobPost';
 import Profile from './pages/Profile';
 import EmailVerification from './pages/Otp';
 import CandidateRecommender from './pages/CandidateRecommender';
-import ProtectedRoute from './components/ProtectedRoute'; // Importing ProtectedRoute
+
 
 const App = () => {
   const location = useLocation();
@@ -20,20 +20,28 @@ const App = () => {
 
   const shouldHideNavBar = hideNavBarPaths.includes(location.pathname);
 
+  const isAuthenticated =()=>{
+   const token = localStorage.getItem('token')
+   if (token === undefined || token === null) {
+    return false
+   }else{
+    return true
+   }
+  }
   return (
     <>
       {!shouldHideNavBar && <ResponsiveNavBar />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={ isAuthenticated()? <Home />:  <Navigate to="/login" replace /> } />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/EasyApply" element={<EasyApply />} />
-        <ProtectedRoute path="/applied" element={<AppliedJobs />} />
-        <Route path="/hire" element={<Hire />} />
-        <ProtectedRoute path="/jobpost" element={<JobPost />} />
-        <ProtectedRoute path="/profile" element={<Profile />} />
+        <Route path="/EasyApply" element={ isAuthenticated()? <EasyApply />: <Navigate to="/login" replace /> } />
+        <Route path="/applied" element={ isAuthenticated()? <AppliedJobs />: <Navigate to="/login" replace /> } />
+        <Route path="/hire" element={isAuthenticated()? <Hire />: <Navigate to="/login" replace />} />
+        <Route path="/jobpost" element={isAuthenticated()? <JobPost />: <Navigate to="/login" replace />} />
+        <Route path="/profile" element={isAuthenticated()? <Profile />: <Navigate to="/login" replace />} />
         <Route path="/otp" element={<EmailVerification />} />
-        <Route path="/candidateRecommendation" element={<CandidateRecommender />} />
+        <Route path="/candidateRecommendation" element={isAuthenticated()? <CandidateRecommender />: <Navigate to="/login" replace />} />
       </Routes>
     </>
   );
