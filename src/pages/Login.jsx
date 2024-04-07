@@ -5,14 +5,28 @@ import Lottie from 'lottie-react';
 import animationData from '../assets/loginAnime.json'; // Ensure this path is correct
 import companyLogo from '../assets/logo.png'
 import { Link } from 'react-router-dom';
+import { BASE_URL } from '../utils';
+import  axios  from 'axios';
+import {useNavigate} from "react-router-dom"
 
 const LoginPage = () => {
+  const navigate = useNavigate()
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
+  const handleLogin = async() => {
     // Implement your login logic here
-    console.log(username, password);
+    try {
+      const auth = await axios.post(`${BASE_URL}/login`,{
+        username:username,
+        password:password
+      })
+      localStorage.setItem("token",auth.data.token.toString())
+      localStorage.setItem("userId",auth.data.user.id.toString())
+      navigate('/')
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
