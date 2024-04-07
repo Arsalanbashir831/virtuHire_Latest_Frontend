@@ -26,6 +26,7 @@ function stringToList(inputString) {
 export const JobDetail = ({ isRecruiter }) => {
   const navigate = useNavigate();
   const selectedJob = useRecoilValue(selectedJobState);
+  console.log(selectedJob);
   if (!selectedJob) return <div></div>;
   return (
     <Card className="mx-5 mt-5 border rounded-lg overflow-hidden shadow-lg">
@@ -50,7 +51,7 @@ export const JobDetail = ({ isRecruiter }) => {
             <>
               <Button
                 onClick={() => {
-                  navigate("/EasyApply", { state: { id: selectedJob.id } });
+                  navigate("/EasyApply", { state: { id: selectedJob.id ,jobUrl:selectedJob.url , jobDocument:selectedJob.job_document } });
                 }}
                 type="primary"
                 style={{
