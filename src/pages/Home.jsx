@@ -22,7 +22,7 @@ const Home = () => {
     <div className='grid grid-cols-3 '>
     <JobList/>
     <div className='col-span-2'>
-    <JobDetail />
+    <JobDetail isRecruiter={false} />
     </div>
     </div>
    </>

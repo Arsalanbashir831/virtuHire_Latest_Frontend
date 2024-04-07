@@ -4,6 +4,7 @@ import { UserOutlined, MailOutlined, LockOutlined } from '@ant-design/icons';
 import Lottie from 'lottie-react';
 import animationData from '../assets/loginAnime.json'; 
 import companyLogo from '../assets/logo.png'
+import { Link } from 'react-router-dom';
 
 const SignupPage = () => {
   const [formData, setFormData] = useState({
@@ -92,7 +93,7 @@ const SignupPage = () => {
             </Button>
           </div>
           <div className="flex justify-center mt-4 text-sm">
-            <a href="#" className="text-blue-600">Already have an account? Log In</a>
+           <span>Already have an account?</span> <Link to={'/login'} className="text-blue-600"> Log In</Link>
           </div>
         </div>
       </div>

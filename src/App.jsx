@@ -9,11 +9,13 @@ import AppliedJobs from './pages/AppliedJobs';
 import Hire from './pages/Hire';
 import JobPost from './pages/JobPost';
 import Profile from './pages/Profile';
+import EmailVerification from './pages/Otp';
+import CandidateRecommender from './pages/CandidateRecommender';
 
 const App = () => {
   const location = useLocation();
 
-  const hideNavBarPaths = ['/login', '/signup'];
+  const hideNavBarPaths = ['/login', '/signup','/otp'];
 
   const shouldHideNavBar = hideNavBarPaths.includes(location.pathname);
 
@@ -29,6 +31,8 @@ const App = () => {
         <Route path="/hire" element={<Hire />} />
         <Route path="/jobpost" element={<JobPost />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/otp" element={<EmailVerification />} />
+        <Route path="/candidateRecommendation" element={<CandidateRecommender />} />
       </Routes>
     </>
   );

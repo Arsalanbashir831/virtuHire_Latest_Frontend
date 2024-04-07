@@ -4,6 +4,7 @@ import JobList from '../components/JobList';
 import { JobDetail } from '../components/JobDetails';
 
 const Hire = () => {
+    
   return (
     <div className="container mx-auto py-8">
       <div className="flex justify-end items-center mb-4">
@@ -15,7 +16,7 @@ const Hire = () => {
       <div className="grid grid-cols-3 gap-8">
         <JobList />
         <div className="col-span-2">
-          <JobDetail />
+          <JobDetail  isRecruiter={true}/>
         </div>
       </div>
     </div>

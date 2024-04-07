@@ -4,6 +4,7 @@ import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import Lottie from 'lottie-react';
 import animationData from '../assets/loginAnime.json'; // Ensure this path is correct
 import companyLogo from '../assets/logo.png'
+import { Link } from 'react-router-dom';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -53,7 +54,7 @@ const LoginPage = () => {
           </Button>
           <div className="flex justify-between text-sm">
             <a href="#" className="text-blue-600">Forgot password?</a>
-            <div> <span>Create New Account</span><a href="#" className="text-blue-600"> Sign Up</a></div>
+            <div> <span>Create New Account</span><Link to={'/signup'} className="text-blue-600"> Sign Up</Link></div>
            
           </div>
         </div>
