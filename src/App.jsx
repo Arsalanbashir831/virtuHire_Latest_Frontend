@@ -11,6 +11,7 @@ import JobPost from './pages/JobPost';
 import Profile from './pages/Profile';
 import EmailVerification from './pages/Otp';
 import CandidateRecommender from './pages/CandidateRecommender';
+import ProtectedRoute from './components/ProtectedRoute'; // Importing ProtectedRoute
 
 const App = () => {
   const location = useLocation();
@@ -27,10 +28,10 @@ const App = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/EasyApply" element={<EasyApply />} />
-        <Route path="/applied" element={<AppliedJobs />} />
+        <ProtectedRoute path="/applied" element={<AppliedJobs />} />
         <Route path="/hire" element={<Hire />} />
-        <Route path="/jobpost" element={<JobPost />} />
-        <Route path="/profile" element={<Profile />} />
+        <ProtectedRoute path="/jobpost" element={<JobPost />} />
+        <ProtectedRoute path="/profile" element={<Profile />} />
         <Route path="/otp" element={<EmailVerification />} />
         <Route path="/candidateRecommendation" element={<CandidateRecommender />} />
       </Routes>
@@ -39,3 +40,4 @@ const App = () => {
 };
 
 export default App;
+
