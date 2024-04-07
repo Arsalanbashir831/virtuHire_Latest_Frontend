@@ -1,7 +1,7 @@
+// src/atoms/JobState.js
 import { atom } from "recoil";
 
-
-export const jobState = atom({
-    key: 'jobState', 
-    default: '', 
-  });
+export const selectedJobState = atom({
+  key: 'selectedJobState',
+  default: null,
+});
