@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 // Placeholder authentication function, replace with your actual logic
 const isAuthenticated = () => {
@@ -7,8 +7,12 @@ const isAuthenticated = () => {
   return !!localStorage.getItem('userToken');
 };
 
-const ProtectedRoute = ({ component: Component, ...rest }) => (
-  <Route
+const ProtectedRoute = ({ path, element: Component, ...rest }) => {
+  return isAuthenticated() ? <Component {...rest} /> : <Navigate to="/login" replace />;
+};
+
+export default ProtectedRoute;
+
     {...rest}
     render={props =>
       isAuthenticated() ? (
