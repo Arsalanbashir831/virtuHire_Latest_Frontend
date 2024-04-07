@@ -1,13 +1,15 @@
 import React from 'react';
-import { Card, Button, Rate, Avatar, Divider, Tag } from 'antd';
+import { Card, Button, Avatar, Divider, Tag } from 'antd';
 import { ClockCircleOutlined, MailOutlined, UserOutlined } from '@ant-design/icons';
 import { useRecoilValue } from 'recoil';
 import { selectedJobState } from '../atoms/JobState'; 
+import {useNavigate} from 'react-router-dom'
 
 
 export const JobDetail = () => {
+  const navigate= useNavigate()
   const selectedJob = useRecoilValue(selectedJobState);
-  if (!selectedJob) return <div>No job selected</div>;
+  if (!selectedJob) return <div></div>;
     return (
       <Card className="mx-5 mt-5 border rounded-lg overflow-hidden shadow-lg">
         <div className="p-5">
@@ -17,11 +19,11 @@ export const JobDetail = () => {
               <div>
                 <h3 className="text-2xl font-bold">{selectedJob.company}</h3>
                 <h3 className="text-2xl font-bold">{selectedJob.title}</h3>
-                <Rate disabled defaultValue={selectedJob.rating} />
+               
                 <p className="text-gray-500">{selectedJob.location} - {selectedJob.type}</p>
               </div>
             </div>
-            <Button type="primary" style={{ backgroundColor: 'green', borderColor: 'green', color: 'white' }}>Easy Apply</Button>
+            <Button onClick={()=>{navigate('/EasyApply',{state:{id:selectedJob.id}})}} type="primary" style={{ backgroundColor: 'green', borderColor: 'green', color: 'white' }}>Easy Apply</Button>
           </div>
           <Divider />
           <div>

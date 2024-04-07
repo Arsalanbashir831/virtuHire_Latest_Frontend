@@ -3,21 +3,19 @@ import { motion } from 'framer-motion';
 import { MenuOutlined, UserOutlined, DownOutlined } from '@ant-design/icons';
 import { Dropdown, Menu } from 'antd';
 import companyLogo from '../assets/logo.png'; // Ensure the path to your logo is correct
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 // Define navigation links
 const navLinks = [
   { name: 'Home', href: '/' },
-  { name: 'Jobs', href: '/jobs' },
+  { name: 'Applied Job', href: '/applied' },
   { name: 'Hire', href: '/hire' },
   { name: 'AI Interview', href: '/interview' },
 ];
 
 // Define user dropdown menu items
 const userMenuItems = [
-  { key: 'profile', label: 'Profile' },
-  {key:'own_post',label:'Your Job Post'},
-  {key:'own_applied',label:'Your Applied Jobs'},
+  { key: 'profile', label: 'Profile'  },
   { key: 'logout', label: 'Logout' }
 ];
 
@@ -25,15 +23,14 @@ const userDropdownMenu = (
   <Menu
     items={userMenuItems.map((item) => ({
       key: item.key,
-      label: (<a href={item.key === 'logout' ? '/logout' : '#'}>
-                {item.label}
-              </a>)
+      label: (<a href={item.key === 'logout' ? '/login' :`/${item.key}` }>{item.label}</a>)
     }))}
   />
 );
 
 const ResponsiveNavBar = () => {
   const [isMobileMenuVisible, setIsMobileMenuVisible] = useState(false);
+  const location = useLocation(); // Get current location from react-router-dom
 
   const mobileMenuVariants = {
     open: { x: 0, opacity: 1, display: 'block' },
@@ -44,9 +41,16 @@ const ResponsiveNavBar = () => {
     setIsMobileMenuVisible(!isMobileMenuVisible);
   };
 
-  const NavLink = ({ name, href }) => (
-    <a href={href} className="py-5 px-3 text-gray-700 hover:text-green-500">{name}</a>
-  );
+  const NavLink = ({ name, href }) => {
+    const isActive = location.pathname === href; // Check if current path matches the href
+    const activeStyle = isActive ? 'text-green-500 underline' : 'text-gray-700 hover:text-green-500';
+
+    return (
+      <Link to={href} className={`py-5 px-3 ${activeStyle}`}>
+        {name}
+      </Link>
+    );
+  };
 
   return (
     <nav className="bg-white shadow-md">
@@ -82,15 +86,17 @@ const ResponsiveNavBar = () => {
         className="md:hidden lg:hidden absolute top-16 left-0 w-full bg-white z-20"
       >
         {navLinks.map((link) => (
-          <a key={link.name} href={link.href} className="block py-2 px-4 text-sm hover:bg-gray-200">{link.name}</a>
+          <a key={link.name} href={link.href} className="block py-2 px-4 text-sm hover:bg-gray-200">
+            {link.name}
+          </a>
         ))}
         <div className=" px-5 md:flex items-center space-x-3">
-            <Dropdown overlay={userDropdownMenu} trigger={['click']}>
-              <a onClick={(e) => e.preventDefault()} className="ant-dropdown-link" href="#">
-                <UserOutlined /> <DownOutlined />
-              </a>
-            </Dropdown>
-          </div>
+          <Dropdown overlay={userDropdownMenu} trigger={['click']}>
+            <a onClick={(e) => e.preventDefault()} className="ant-dropdown-link" href="#">
+              <UserOutlined /> <DownOutlined />
+            </a>
+          </Dropdown>
+        </div>
       </motion.div>
     </nav>
   );
