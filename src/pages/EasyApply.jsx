@@ -3,6 +3,8 @@ import { Form, Input, Button, Upload, Card } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import Lottie from 'lottie-react';
 import animationData from '../assets/applyAnime.json'; // Your Lottie animation JSON file
+import { BASE_URL, NLP_SERVER } from '../utils';
+
 
 const EasyApply = () => {
   const [resume, setResume] = useState(null);

@@ -19,14 +19,24 @@ const userMenuItems = [
   { key: 'logout', label: 'Logout' }
 ];
 
+const handleLogout = () => {
+  localStorage.clear();
+};
 const userDropdownMenu = (
-  <Menu
-    items={userMenuItems.map((item) => ({
-      key: item.key,
-      label: (<a href={item.key === 'logout' ? '/login' :`/${item.key}` }>{item.label}</a>)
-    }))}
-  />
-);
+  <Menu>
+    {userMenuItems.map((item) => (
+      <Menu.Item key={item.key}>
+        {item.key === 'logout' ? (
+          <Link to="/login" onClick={handleLogout}>
+            {item.label}
+          </Link>
+        ) : (
+          <Link to={`/${item.key}`}>{item.label}</Link>
+        )}
+      </Menu.Item>
+    ))}
+  </Menu>
+)
 
 const ResponsiveNavBar = () => {
   const [isMobileMenuVisible, setIsMobileMenuVisible] = useState(false);

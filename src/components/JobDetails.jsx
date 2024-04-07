@@ -8,6 +8,20 @@ import {
 import { useRecoilValue } from "recoil";
 import { selectedJobState } from "../atoms/JobState";
 import { useNavigate } from "react-router-dom";
+function stringToList(inputString) {
+  // Check if the inputString is not empty
+  if (!inputString || typeof inputString !== 'string') {
+    return []; // Return empty array if input is invalid
+  }
+
+  // Split the inputString by commas, trim whitespace, and filter out empty strings
+  const list = inputString
+    .split(',') // Split by comma
+    .map(item => item.trim()) // Trim whitespace around each item
+    .filter(item => item !== ''); // Filter out empty strings
+
+  return list;
+}
 
 export const JobDetail = ({ isRecruiter }) => {
   const navigate = useNavigate();
@@ -91,7 +105,7 @@ export const JobDetail = ({ isRecruiter }) => {
         <div>
           <h4 className="font-bold">Skills:</h4>
           <div className="flex flex-wrap gap-2">
-            {selectedJob.skills.map((skill, index) => (
+            { stringToList(selectedJob.skills).map((skill, index) => (
               <Tag color="blue" key={index}>
                 {skill}
               </Tag>

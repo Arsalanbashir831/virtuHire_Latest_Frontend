@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Routes, useLocation,Navigate } from 'react-router-dom';
 import Home from './pages/Home';
 import LoginPage from './pages/Login';
@@ -11,23 +11,30 @@ import JobPost from './pages/JobPost';
 import Profile from './pages/Profile';
 import EmailVerification from './pages/Otp';
 import CandidateRecommender from './pages/CandidateRecommender';
+import useUserData from './customhooks/useUserData';
 
 
 const App = () => {
+ const userData = useUserData()
   const location = useLocation();
-
   const hideNavBarPaths = ['/login', '/signup','/otp'];
-
   const shouldHideNavBar = hideNavBarPaths.includes(location.pathname);
 
+  useEffect(()=>{
+    if (userData === null) {
+      <Navigate to={'/login'}/>
+    }
+  },[userData])
+  
   const isAuthenticated =()=>{
    const token = localStorage.getItem('token')
-   if (token === undefined || token === null) {
+   if (token === undefined || token === null ) {
     return false
    }else{
     return true
    }
   }
+ 
   return (
     <>
       {!shouldHideNavBar && <ResponsiveNavBar />}

@@ -1,7 +1,6 @@
 import React from 'react'
-import ResponsiveNavBar from '../components/Navbar'
-import { Card, Button, Rate } from 'antd';
-import { ClockCircleOutlined,ThunderboltOutlined } from '@ant-design/icons';
+
+import { ThunderboltOutlined } from '@ant-design/icons';
 import ResponsiveSearchBar from '../components/Search';
 import JobList from '../components/JobList';
 import  { JobDetail } from '../components/JobDetails';

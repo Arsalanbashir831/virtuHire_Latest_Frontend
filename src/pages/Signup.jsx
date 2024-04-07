@@ -5,11 +5,15 @@ import Lottie from 'lottie-react';
 import animationData from '../assets/loginAnime.json'; 
 import companyLogo from '../assets/logo.png'
 import { Link } from 'react-router-dom';
+import  axios  from 'axios';
+import { BASE_URL } from '../utils';
+import {useNavigate} from 'react-router-dom'
 
 const SignupPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     email: '',
     username: '',
     password: '',
@@ -24,7 +28,24 @@ const SignupPage = () => {
     }));
   };
 
-  const handleSignup = () => {
+  const handleSignup = async (e) => {
+    const {first_name,last_name,email,username ,password,confirmPassword}=formData
+    e.preventDefault()
+    if (password != confirmPassword) {
+      console.log('password mismatch');
+    }else{
+      try {
+        const { confirmPassword, ...data } = formData
+        const registeration = await axios.post(`${BASE_URL}/signup`,data)
+        if (registeration.status === 201) {
+          navigate('/otp', { state: { email: email } });
+        } else {
+          console.log('failed');
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
     // Implement your signup logic here
     console.log(formData);
   };
@@ -44,16 +65,16 @@ const SignupPage = () => {
               size="large"
               placeholder="First Name"
               prefix={<UserOutlined />}
-              name="firstName"
-              value={formData.firstName}
+              name="first_name"
+              value={formData.first_name}
               onChange={handleInputChange}
             />
             <Input
               size="large"
               placeholder="Last Name"
               prefix={<UserOutlined />}
-              name="lastName"
-              value={formData.lastName}
+              name="last_name"
+              value={formData.last_name}
               onChange={handleInputChange}
             />
             <Input
