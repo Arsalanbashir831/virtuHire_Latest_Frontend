@@ -1,71 +1,92 @@
-import React, { useState,useEffect } from 'react';
-import { Form, Input, Button, Upload, Card, Select } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, Button, Upload, Card, Select } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import Lottie from 'lottie-react';
 import animationData from '../assets/applyAnime.json'; // Your Lottie animation JSON file
-import { NLP_SERVER } from '../utils';
-import axios from 'axios'
+import { NLP_SERVER,BASE_URL } from '../utils';
+import axios from 'axios';
 const { Option } = Select;
 
 const JobPost = () => {
-    const { TextArea } = Input;
-  const [jobDescription, setjobDescription] = useState(null);
-  const [parsedData , setParsedData] = useState({
+
+  const [jobDescription, setJobDescription] = useState(null);
+  const [isLoading , setIsLoading] = useState(false);
+  const [parsedData, setParsedData] = useState({
     experience: "",
     responsibilities: "",
     skills: "",
     title: "",
     company: "",
-  })
+    location:"",
+    type:""
+  });
 
-  const onFinish = async (values) => {
+  const token = localStorage.getItem('token')
+  const userId = localStorage.getItem('userId')
+  const onFinish = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("job_document", jobDescription);
+    formData.append('title', parsedData.title);
+    formData.append('company', parsedData.company);
+    formData.append('location', parsedData.location);
+    formData.append('type', parsedData.type);
+    formData.append('skills', parsedData.skills);
+    formData.append('experience', parsedData.experience);
+    formData.append('responsibilities', parsedData.responsibilities);
+    formData.append('recruiter', `${BASE_URL}/user/${userId}/`);
     try {
-      const { Skills, ...restValues } = values;
-      const skillsArray = Skills.split(',').map((skill) => skill.trim());
-
-      console.log('Submitted values:', { ...restValues, Skills: skillsArray });
-      console.log('Uploaded jobDescription:', jobDescription);
-
-      // Handle further processing or API calls here
+        const postJob = await axios.post(`${BASE_URL}/job/`,
+        formData,
+        {
+            headers: {
+              Authorization: `Token ${token}`, 
+            },
+          }
+    )
+    console.log(postJob)
     } catch (error) {
       console.error('Error submitting application:', error);
     }
   };
 
-  const jdParsing = async (file)=>{
-    try{
-        const formData = new FormData()
-        formData.append("job_pdf",file);
-        const jdParserResponse = await axios.post(`${NLP_SERVER}/jobDescriptionParser`,formData,{
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          })
-          console.log(jdParserResponse)
-          setParsedData({
-            experience: jdParserResponse.data.entities.hasOwnProperty('EXPERIENCE')?jdParserResponse.data.entities.EXPERIENCE[0]:"",
-            roles: jdParserResponse.data.entities.hasOwnProperty('ROLES')?jdParserResponse.data.entities.ROLES[0]:"",
-            skills: jdParserResponse.data.entities.hasOwnProperty('SKILLS') ?jdParserResponse.data.entities.SKILLS.join(", "):"",
-            title: jdParserResponse.data.entities.hasOwnProperty('TITLE')? jdParserResponse.data.entities.TITLE[0]:"",
-            company: jdParserResponse.data.entities.hasOwnProperty('TITLE')? jdParserResponse.data.entities.TITLE[1]:"",
-          });
+  const jdParsing = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("job_pdf", file);
+      const jdParserResponse = await axios.post(`${NLP_SERVER}/jobDescriptionParser`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-    }catch(e){
-        console.log(e)
+      setParsedData({
+        experience: jdParserResponse.data.entities.hasOwnProperty('EXPERIENCE') ? jdParserResponse.data.entities.EXPERIENCE[0] : "",
+        responsibilities: jdParserResponse.data.entities.hasOwnProperty('ROLES') ? jdParserResponse.data.entities.ROLES[0] : "",
+        skills: jdParserResponse.data.entities.hasOwnProperty('SKILLS') ? jdParserResponse.data.entities.SKILLS.join(", ") : "",
+        title: jdParserResponse.data.entities.hasOwnProperty('TITLE') ? jdParserResponse.data.entities.TITLE[0] : "",
+        company: jdParserResponse.data.entities.hasOwnProperty('TITLE') ? jdParserResponse.data.entities.TITLE[1] : "",
+      });
+    } catch (e) {
+      console.log(e);
     }
-   
-  }
-  const onFileChange =   (file) => {
-    setjobDescription(file.fileList[0].originFileObj);
-     jdParsing(file.fileList[0].originFileObj)
   };
+
+  const onFileChange = (file) => {
+    setJobDescription(file.fileList[0].originFileObj);
+    jdParsing(file.fileList[0].originFileObj);
+  };
+
   const onChangeInputText = (e) => {
     const { name, value } = e.target;
-    setParsedData({ ...parsedData, [name]: value });
+    setParsedData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
   };
-  
- 
-console.log(parsedData);
+
+  console.log(parsedData.title);
+
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <Card className="w-full shadow-md rounded-lg">
@@ -75,92 +96,133 @@ console.log(parsedData);
           </div>
           <div className="flex-grow">
             <h1 className="text-xl font-bold mb-4 text-center">Easy Job Posting</h1>
-            <Form name="easyApplyForm" onFinish={onFinish} layout="vertical">
-              <Form.Item
-                label="Upload jobDescription"
-                name="jobDescription"
-                valuePropName="fileList"
-                getValueFromEvent={onFileChange}
-                rules={[{ required: true, message: 'Please upload your jobDescription' }]}
-              >
-                <Upload name="jobDescription" beforeUpload={() => false}>
+            <form name="easyApplyForm" onSubmit={onFinish} className="w-full">
+              <div className="mb-4">
+                <label htmlFor="jobDescription" className="block text-sm font-medium text-gray-700">
+                  Upload jobDescription
+                </label>
+                <Upload name="jobDescription" beforeUpload={() => false} onChange={onFileChange}>
                   <Button icon={<UploadOutlined />}>Click to Upload</Button>
                 </Upload>
-              </Form.Item>
+              </div>
 
-              <Form.Item
-                label="Job Title"
-                name="title"
-                rules={[{ required: true, message: 'Please enter Job Title' }]}
-              >
-               
-                <Input placeholder="Enter Job Title" rows={4} name='title'  value={parsedData.title} onChange={onChangeInputText} />
-              </Form.Item>
-              <Form.Item
-                label="Company Name"
-                name="company"
-                rules={[{ required: true, message: 'Please enter Company Name' }]}
-              >
-                <Input placeholder="Enter Company Name" name='company' value={parsedData.company} onChange={onChangeInputText} />
-              </Form.Item>
-              <Form.Item
-                label="Responsibilities"
-                name="responsibilities"
-                rules={[{ required: true, message: 'Please enter Responsibilities' }]}
-              >
-                <Input placeholder="Enter Responsibilities" name="responsibilities" value={parsedData.responsibilities} onChange={onChangeInputText} />
-              </Form.Item>
-              <Form.Item
-                label="Experience"
-                name="experience"
-                rules={[{ required: true, message: 'Please enter Experience' }]}
-              >
-                <Input placeholder="Enter Experience" name='experience' value={parsedData.experience} onChange={onChangeInputText}/>
-              </Form.Item>
-              <Form.Item
-                label="Skills"
-                name="skills"
-                rules={[{ required: true, message: 'Please enter Skills' }]}
-              >
-                <Select
-                  mode="tags"
-                  placeholder="Enter Skills"
-                  style={{ width: '100%' }}
+              <div className="mb-4">
+                <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+                  Job Title
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  name="title"
+                  value={parsedData.title}
+                  onChange={onChangeInputText}
+                  className="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border p-2"
+                  placeholder="Enter Job Title"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="company" className="block text-sm font-medium text-gray-700">
+                  Company Name
+                </label>
+                <input
+                  type="text"
+                  id="company"
+                  name="company"
+                  value={parsedData.company}
+                  onChange={onChangeInputText}
+                  className="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border p-2"
+                  placeholder="Enter Company Name"
+                />
+              </div>
+              
+              <div className="mb-4">
+                <label htmlFor="responsibilities" className="block text-sm font-medium text-gray-700">
+                  Responsibilities
+                </label>
+                <input
+                  type="text"
+                  id="responsibilities"
+                  name="responsibilities"
+                  value={parsedData.responsibilities}
+                  onChange={onChangeInputText}
+                  className="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border p-2"
+                  placeholder="Enter Responsibilities"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="experience" className="block text-sm font-medium text-gray-700">
+                  Experience
+                </label>
+                <input
+                  type="text"
+                  id="experience"
+                  name="experience"
+                  value={parsedData.experience}
+                  onChange={onChangeInputText}
+                  className="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border p-2"
+                  placeholder="Enter Experience"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label htmlFor="skills" className="block text-sm font-medium text-gray-700">
+                  Skills
+                </label>
+                <input
+                  type="text"
+                  id="skills"
+                  name="skills"
                   value={parsedData.skills}
                   onChange={onChangeInputText}
+                  className="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border p-2"
+                  placeholder="Enter Skills (comma-separated)"
                 />
-              </Form.Item>
+              </div>
 
-              <Form.Item
-                label="Job Type"
-                name="jobType"
-                rules={[{ required: true, message: 'Please select job type' }]}
-              >
-                <Select placeholder="Select job type">
-                  <Option value="Full Time">Full Time</Option>
-                  <Option value="Part Time">Part Time</Option>
-                  <Option value="Freelance">Freelance</Option>
-                  <Option value="Contract">Contract</Option>
-                </Select>
-              </Form.Item>
+              <div className="mb-4">
+                <label htmlFor="jobType" className="block text-sm font-medium text-gray-700">
+                  Job Type
+                </label>
+                <select
+                  id="type"
+                  name="type"
+                  value={parsedData.type}
+                  onChange={onChangeInputText}
+                  className="border-gray-300 py-2 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border p-2t"
+                >
+                  <option value="">Select Job Type</option>
+                  <option value="Full Time">Full Time</option>
+                  <option value="Part Time">Part Time</option>
+                  <option value="Freelance">Freelance</option>
+                  <option value="Contract">Contract</option>
+                </select>
+              </div>
 
-              <Form.Item
-                label="Location"
-                name="location"
-                rules={[{ required: true, message: 'Please select location' }]}
-              >
-                <Select placeholder="Select location">
-                  <Option value="remote">Remote</Option>
-                  <Option value="on-site">On Site</Option>
-                </Select>
-              </Form.Item>
+              <div className="mb-4">
+                <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+                  Location
+                </label>
+                <select
+                  id="location"
+                  name="location"
+                  value={parsedData.location}
+                  onChange={onChangeInputText}
+                  className="border-gray-300 py-2 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border p-2t"
+                >
+                  <option value="">Select Location</option>
+                  <option value="Remote">Remote</option>
+                  <option value="On Site">On Site</option>
+                </select>
+              </div>
 
-              <Form.Item>
-                <Button type="primary" htmlType="submit" className="w-full">
-                  Add Job
-                </Button>
-              </Form.Item>
-            </Form>
+              {/* Repeat similar pattern for other fields */}
+              
+              <Button type="primary" htmlType="submit" className="w-full">
+                Add Job
+              </Button>
+            </form>
           </div>
         </div>
       </Card>

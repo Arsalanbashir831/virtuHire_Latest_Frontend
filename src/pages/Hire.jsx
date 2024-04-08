@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import JobList from '../components/JobList';
 import { JobDetail } from '../components/JobDetails';
 
 const Hire = () => {
-    
+  // Use useEffect with an empty dependency array to reload the component on mount
+  useEffect(() => {
+    // Place any reload logic here (e.g., fetching updated data or resetting state)
+    console.log('Component mounted and reloaded.');
+  }, []); // Empty dependency array means this effect runs only once on mount
+
   return (
     <div className="container mx-auto py-8">
       <div className="flex justify-end items-center mb-4">
@@ -14,9 +19,9 @@ const Hire = () => {
       </div>
 
       <div className="grid grid-cols-3 gap-8">
-        <JobList />
+        <JobList isrecruiter={true} />
         <div className="col-span-2">
-          <JobDetail  isRecruiter={true}/>
+          <JobDetail isRecruiter={true} />
         </div>
       </div>
     </div>

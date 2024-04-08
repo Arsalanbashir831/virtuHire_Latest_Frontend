@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, Button, Avatar, Divider, Tag } from "antd";
 import {
   ClockCircleOutlined,
   MailOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue ,useSetRecoilState} from "recoil";
 import { selectedJobState } from "../atoms/JobState";
 import { useNavigate } from "react-router-dom";
 function stringToList(inputString) {
@@ -14,11 +14,10 @@ function stringToList(inputString) {
     return []; // Return empty array if input is invalid
   }
 
-  // Split the inputString by commas, trim whitespace, and filter out empty strings
   const list = inputString
-    .split(',') // Split by comma
-    .map(item => item.trim()) // Trim whitespace around each item
-    .filter(item => item !== ''); // Filter out empty strings
+    .split(',') 
+    .map(item => item.trim()) 
+    .filter(item => item !== ''); 
 
   return list;
 }
@@ -26,7 +25,13 @@ function stringToList(inputString) {
 export const JobDetail = ({ isRecruiter }) => {
   const navigate = useNavigate();
   const selectedJob = useRecoilValue(selectedJobState);
-  console.log(selectedJob);
+  const setSelectedJob = useSetRecoilState(selectedJobState);
+useEffect(()=>{
+  setSelectedJob(null)
+},[])
+
+
+
   if (!selectedJob) return <div></div>;
   return (
     <Card className="mx-5 mt-5 border rounded-lg overflow-hidden shadow-lg">

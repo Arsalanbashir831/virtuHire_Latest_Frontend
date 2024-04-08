@@ -19,7 +19,7 @@ const Home = () => {
     <br/>
     <hr/>
     <div className='grid grid-cols-3 '>
-    <JobList/>
+    <JobList isrecruiter={false}/>
     <div className='col-span-2'>
     <JobDetail isRecruiter={false} />
     </div>
