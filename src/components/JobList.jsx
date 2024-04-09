@@ -34,7 +34,7 @@ const JobCard = ({ job, selectJob }) => {
   );
 };
 
-const JobList = ({isrecruiter}) => {
+const JobList = ({isRecruiter}) => {
   const [jobResponse, setJobResponse] = useState(null);
   const [selectedJob, setSelectedJob] = useRecoilState(selectedJobState);
   const authToken = localStorage.getItem("token");
@@ -50,11 +50,11 @@ const JobList = ({isrecruiter}) => {
         const response = await axios.get(`${BASE_URL}/job`, config);
         console.log(response.data);
         let  filteredJobs=null
-        if (isrecruiter) {
-           filteredJobs = response.data.filter((job) => userId === getJobRecruiterId(job.recruiter));  
+        if (isRecruiter === false) {
+          filteredJobs = response.data.filter((job) => userId != job.recruiter_details.id);
         }else{
-           filteredJobs = response.data.filter((job) => userId != getJobRecruiterId(job.recruiter));
-        }
+          filteredJobs = response.data.filter((job) => userId == job.recruiter_details.id);
+        } 
         setJobResponse(filteredJobs);
       } catch (error) {
         console.log(error);
@@ -67,11 +67,7 @@ const JobList = ({isrecruiter}) => {
     setSelectedJob(job);
   };
 
-  const getJobRecruiterId =(url)=>{
-    const parts = url.split('/'); 
-    const id = parts[6];
-    return id
-  }
+
 
   return (
     <div className="container mx-auto px-4 my-5 overflow-scroll overflow-x-hidden h-[500px]">

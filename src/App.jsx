@@ -12,6 +12,7 @@ import Profile from './pages/Profile';
 import EmailVerification from './pages/Otp';
 import CandidateRecommender from './pages/CandidateRecommender';
 import useUserData from './customhooks/useUserData';
+import AIQA from './pages/AIQA';
 
 
 const App = () => {
@@ -47,6 +48,7 @@ const App = () => {
         <Route path="/hire" element={isAuthenticated()? <Hire />: <Navigate to="/login" replace />} />
         <Route path="/jobpost" element={isAuthenticated()? <JobPost />: <Navigate to="/login" replace />} />
         <Route path="/profile" element={isAuthenticated()? <Profile />: <Navigate to="/login" replace />} />
+        <Route path="/AIQA" element={isAuthenticated()? <AIQA />: <Navigate to="/login" replace />} />
         <Route path="/otp" element={<EmailVerification />} />
         <Route path="/candidateRecommendation" element={isAuthenticated()? <CandidateRecommender />: <Navigate to="/login" replace />} />
       </Routes>

@@ -10,7 +10,7 @@ const navLinks = [
   { name: 'Home', href: '/' },
   { name: 'Applied Job', href: '/applied' },
   { name: 'Hire', href: '/hire' },
-  { name: 'AI Interview', href: '/interview' },
+  { name: 'AI Interview', href: '/AIQA' },
 ];
 
 // Define user dropdown menu items

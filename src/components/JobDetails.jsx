@@ -4,14 +4,15 @@ import {
   ClockCircleOutlined,
   MailOutlined,
   UserOutlined,
+  DeleteOutlined
 } from "@ant-design/icons";
 import { useRecoilValue ,useSetRecoilState} from "recoil";
 import { selectedJobState } from "../atoms/JobState";
 import { useNavigate } from "react-router-dom";
 function stringToList(inputString) {
-  // Check if the inputString is not empty
+ 
   if (!inputString || typeof inputString !== 'string') {
-    return []; // Return empty array if input is invalid
+    return []; 
   }
 
   const list = inputString
@@ -22,14 +23,13 @@ function stringToList(inputString) {
   return list;
 }
 
-export const JobDetail = ({ isRecruiter }) => {
+export const JobDetail = ({isRecruiter}) => {
   const navigate = useNavigate();
   const selectedJob = useRecoilValue(selectedJobState);
   const setSelectedJob = useSetRecoilState(selectedJobState);
 useEffect(()=>{
   setSelectedJob(null)
 },[])
-
 
 
   if (!selectedJob) return <div></div>;
@@ -52,11 +52,10 @@ useEffect(()=>{
               </p>
             </div>
           </div>
-          {isRecruiter === false ? (
-            <>
-              <Button
+          {isRecruiter === false ?<>
+            <Button
                 onClick={() => {
-                  navigate("/EasyApply", { state: { id: selectedJob.id ,jobUrl:selectedJob.url , jobDocument:selectedJob.job_document } });
+                  navigate("/EasyApply", { state: { jobId: selectedJob.id ,  jobDocument:selectedJob.job_document } });
                 }}
                 type="primary"
                 style={{
@@ -67,35 +66,26 @@ useEffect(()=>{
               >
                 Easy Apply
               </Button>
-            </>
-          ) : (
-            <>
-              <div className="flex gap-1">
-                <>
-                  <Button
-                    type="primary"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    type="primary"
-                    danger
-                  >
-                    Delete
-                  </Button>
-                  <Button
-                    onClick={() =>
-                      navigate("/candidateRecommendation", {
-                        state: { id: selectedJob.id },
-                      })
-                    }
-                  >
-                    Best Candidate
-                  </Button>
-                </>
-              </div>
-            </>
-          )}
+
+          </>:<>
+
+          <Button
+                onClick={() => {
+                  navigate("/candidateRecommendation", { state: { jobId: selectedJob.id } });
+                }}
+                type="primary"
+                style={{
+                  backgroundColor: "green",
+                  borderColor: "green",
+                  color: "white",
+                }}
+              >
+                Hire Best Candidate 
+              </Button>
+
+          </>}
+            
+        
         </div>
         <Divider />
         <div>
@@ -120,11 +110,30 @@ useEffect(()=>{
         </div>
         <Divider />
         <div className="flex justify-between items-center mt-4">
-          <div>
+          <div className="flex justify-between items-center w-full">
+            <div>
             <ClockCircleOutlined className="align-middle mr-2" />
             <span className="text-gray-500 align-middle">
               {selectedJob.postedDate}
             </span>
+            </div>
+
+            {isRecruiter === false ? <>
+            <div className="flex justify-center items-center mt-3 gap-5">
+           {selectedJob.recruiter_details.profile ===null ?<>
+            <Avatar
+              size="large"
+              icon={<UserOutlined />}
+              className="bg-red-500"
+            />
+           </>:<> <img className="w-10 h-10 rounded-full" src={selectedJob.recruiter_details.profile} /> </>}
+           
+              <h1> {selectedJob.recruiter_details.username}</h1>
+            </div>
+
+            </>:<>
+            <DeleteOutlined className="text-red-500 cursor-pointer" />
+            </>}
           </div>
         </div>
       </div>
