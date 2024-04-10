@@ -1,8 +1,12 @@
 import React, { useState, useRef } from 'react';
+import InterviewQuestions from './InterviewQuestions';
+import { selectedTextArea } from '../atoms/AnswerState';
+import { useRecoilState } from "recoil";
 
 function SpeechToText() {
   const [text, setText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [inputState,setInputState]=useRecoilState(selectedTextArea) 
   const recognitionRef = useRef(null);
 
   const startRecording = () => {
@@ -36,10 +40,13 @@ function SpeechToText() {
 
   const handleTextareaChange = (event) => {
     setText(event.target.value);
+    setInputState(event.target.value)
   };
 
   return (
     <div className="mx-auto p-4 border rounded-lg shadow-lg bg-gray-100 w-full h-[100vh] flex flex-col justify-center items-center">
+    
+    <InterviewQuestions />
       <textarea
         className="w-full p-2 text-lg border rounded-md resize-none"
         rows="4"
