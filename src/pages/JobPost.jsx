@@ -5,10 +5,12 @@ import Lottie from 'lottie-react';
 import animationData from '../assets/applyAnime.json'; // Your Lottie animation JSON file
 import { NLP_SERVER,BASE_URL } from '../utils';
 import axios from 'axios';
+import {useNavigate} from 'react-router-dom'
 const { Option } = Select;
 
-const JobPost = () => {
 
+const JobPost = () => {
+  const navigate = useNavigate()
   const [jobDescription, setJobDescription] = useState(null);
   const [isLoading , setIsLoading] = useState(false);
   const [parsedData, setParsedData] = useState({
@@ -46,6 +48,7 @@ const JobPost = () => {
           }
     )
     console.log(postJob)
+    navigate('/hire')
     } catch (error) {
       console.error('Error submitting application:', error);
     }
