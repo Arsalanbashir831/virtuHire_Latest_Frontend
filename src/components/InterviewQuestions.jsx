@@ -86,7 +86,7 @@ const InterviewQuestions = () => {
         </Card>
       )}
 
-      {currentQuestionIndex === questions.length  || currentQuestionIndex===0 && (
+      {currentQuestionIndex === questions.length -1 && (
         <Button type="primary" onClick={() => navigate('/feedback', { state: { feedback } })}>
           View Feedback
         </Button>

@@ -17,6 +17,7 @@ const JobPost = () => {
     skills: "",
     title: "",
     company: "",
+    education :"",
     location:"",
     type:""
   });
@@ -34,7 +35,7 @@ const JobPost = () => {
     formData.append('skills', parsedData.skills);
     formData.append('experience', parsedData.experience);
     formData.append('responsibilities', parsedData.responsibilities);
-    formData.append('recruiter', `${BASE_URL}/user/${userId}/`);
+    formData.append('recruiter', userId);
     try {
         const postJob = await axios.post(`${BASE_URL}/job/`,
         formData,
@@ -61,11 +62,12 @@ const JobPost = () => {
       });
 
       setParsedData({
-        experience: jdParserResponse.data.entities.hasOwnProperty('EXPERIENCE') ? jdParserResponse.data.entities.EXPERIENCE[0] : "",
-        responsibilities: jdParserResponse.data.entities.hasOwnProperty('ROLES') ? jdParserResponse.data.entities.ROLES[0] : "",
-        skills: jdParserResponse.data.entities.hasOwnProperty('SKILLS') ? jdParserResponse.data.entities.SKILLS.join(", ") : "",
-        title: jdParserResponse.data.entities.hasOwnProperty('TITLE') ? jdParserResponse.data.entities.TITLE[0] : "",
-        company: jdParserResponse.data.entities.hasOwnProperty('TITLE') ? jdParserResponse.data.entities.TITLE[1] : "",
+        experience: jdParserResponse.data.ParsedData.entity['Experience'],
+        education :jdParserResponse.data.ParsedData.entity['Education'],
+        responsibilities: jdParserResponse.data.ParsedData.entity['Responsibilities'] ,
+        skills: jdParserResponse.data.ParsedData.entity['Skills'],
+        title: jdParserResponse.data.ParsedData.entity['Job Title'] ,
+        company: jdParserResponse.data.ParsedData.entity['company'] ,
       });
     } catch (e) {
       console.log(e);
@@ -163,6 +165,20 @@ const JobPost = () => {
                   onChange={onChangeInputText}
                   className="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border p-2"
                   placeholder="Enter Experience"
+                />
+              </div>
+              <div className="mb-4">
+                <label htmlFor="education" className="block text-sm font-medium text-gray-700">
+                  Education
+                </label>
+                <input
+                  type="text"
+                  id="education"
+                  name="education"
+                  value={parsedData.education}
+                  onChange={onChangeInputText}
+                  className="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border p-2"
+                  placeholder="Enter Education"
                 />
               </div>
 

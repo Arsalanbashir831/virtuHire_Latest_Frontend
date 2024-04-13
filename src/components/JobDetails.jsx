@@ -55,7 +55,7 @@ useEffect(()=>{
           {isRecruiter === false ?<>
             <Button
                 onClick={() => {
-                  navigate("/EasyApply", { state: { jobId: selectedJob.id ,  jobDocument:selectedJob.job_document } });
+                  navigate("/EasyApply", { state: { job: selectedJob } });
                 }}
                 type="primary"
                 style={{

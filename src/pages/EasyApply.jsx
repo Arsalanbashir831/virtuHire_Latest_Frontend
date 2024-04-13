@@ -6,22 +6,24 @@ import Lottie from "lottie-react";
 import lottieAnimation from "../assets/applyAnime.json";
 import { useLocation , useNavigate } from "react-router-dom";
 import { message } from "antd";
+
 const EasyApply = () => {
+  
   const userdata = useUserData();
   const navigate =useNavigate()
   const location = useLocation();
-  const { jobId, jobDocument } = location.state;
+  const { job } = location.state;
   const token = localStorage.getItem("token");
   const [resume, setResume] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
-    location: "",
+    description: "",
     skills: "",
     experience: "",
     studies: "",
   });
- 
+ const [resumeDomain , setResumeDomain ] = useState("")
   const handleFileChange = async (e) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
@@ -37,25 +39,13 @@ const EasyApply = () => {
         });
         const data = await response.json();
         setFormData({
-          name:
-            data.entities.hasOwnProperty("NAME") && data.entities.NAME[0] !== ""
-              ? data.entities.NAME[0]
-              : "",
-          location:
-            data.entities.hasOwnProperty("LOCATION") &&
-            data.entities.LOCATION[0] !== ""
-              ? data.entities.LOCATION[0]
-              : "",
-          skills: data.entities.hasOwnProperty("SKILLS")
-            ? data.entities.SKILLS.join(", ")
-            : "",
-          experience: data.entities.hasOwnProperty("WORKED AS")
-            ? data.entities["WORKED AS"].join(", ")
-            : "",
-          studies: data.entities.hasOwnProperty("WORKED AS")
-            ? data.entities.DEGREE?.join(", ")
-            : "",
+          name:data.ParsedData.entity['Name'],
+          description:data.ParsedData.entity['Description'],
+          skills: data.ParsedData.entity['Skills'],
+          experience: data.ParsedData.entity['Experience'],
+          studies: data.ParsedData.entity['Education'],
         });
+        setResumeDomain(data.Domain)
         message.success("Successfully Parsed Resume");
       } catch (error) {
         console.error("Error parsing resume:", error);
@@ -77,15 +67,28 @@ const EasyApply = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const formData = new FormData();
-      formData.append("resume_pdf", resume);
-      formData.append("jobdesc_pdf_url", jobDocument);
-      console.log(resume);
+      // const formData = new FormData();
+      // formData.append("resume_pdf", resume);
+      // formData.append("jobdesc_pdf_url", jobDocument);
+      // console.log(resume);
+      const payload ={
+        "candidate_experience":formData.experience,
+        "candidate_skills":formData.skills,
+        "candidate_edu":formData.studies,
+        "candidate_desc":formData.description,
+        "candidate_domain":resumeDomain,
+        "job_title":job.title,
+        "job_skills":job.skills,
+        "job_education":job.education,
+        "job_responsibilities":job.responsibilities,
+        "job_experience":job.experience
+       }
+      //  console.log(payload);
       const response = await axios.post(
         `${NLP_SERVER}/matchingscore_latest`,
-        formData
+      payload
       );
-      // console.log(response.data);
+     console.log(response)
       if (response) {
         const currentDate = new Date();
         // Extract year, month, and day
@@ -97,10 +100,14 @@ const EasyApply = () => {
         const AppliedformData = new FormData();
         AppliedformData.append("applied_date", formattedDate);
         AppliedformData.append("resume", resume);
-        AppliedformData.append("score", response.data.score);
-        AppliedformData.append( "predictedDomain", response.data.predicted_domain);
+        AppliedformData.append("avg_score", response.data.avg_score);
+        AppliedformData.append( "experience_score", response.data.experience_score);
+        AppliedformData.append( "description_score", response.data.description_score);
+        AppliedformData.append( "education_score", response.data.education_score);
+        AppliedformData.append( "skills_score", response.data.skills_score);
+        AppliedformData.append( "domain_score", response.data.domain_score);
         AppliedformData.append("candidate", userdata.id);
-        AppliedformData.append("job", jobId);
+        AppliedformData.append("job", job.id);
       
         try {
           const submission = await axios.post(
@@ -133,7 +140,7 @@ const EasyApply = () => {
       setIsLoading(false);
     }
   };
-
+ console.log(job)
   return (
     <div className="flex justify-center mt-11">
       <div className="flex flex-col md:flex-row w-full max-w-3xl bg-white rounded-lg shadow-lg overflow-hidden">
@@ -175,7 +182,6 @@ const EasyApply = () => {
               />
             </div>
 
-            {/* Dynamic form fields based on formData */}
             {Object.entries(formData).map(([key, value]) => (
               <div key={key}>
                 <label
