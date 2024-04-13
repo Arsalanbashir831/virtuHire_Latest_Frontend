@@ -1,9 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Input, Button } from 'antd';
-
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios'
+import { BASE_URL } from '../utils';
 
 const EmailVerification = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { email } = location.state;
+  // State to manage the verification code inputs
+  const [verificationCode, setVerificationCode] = useState(['', '', '', '']);
+
   const inputStyle = "border rounded-lg border-gray-300 m-2 text-center shadow-sm";
+//verify_otp
+  // Function to handle input change
+  const handleInputChange = (index, value) => {
+    if (value.match(/^\d{0,1}$/)) {
+      const newVerificationCode = [...verificationCode];
+      newVerificationCode[index] = value;
+      setVerificationCode(newVerificationCode);
+    }
+  };
+
+  // Function to handle verification
+  const handleVerify = async () => {
+    try{
+      const code = verificationCode.join('');
+      console.log('Verifying code:', code);
+      const response = axios.post(`${BASE_URL}/verify_otp`,{
+        email:email,
+        otp:code
+      })
+      navigate('/login')
+    }catch(e){
+      console.log(e);
+    }
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -16,18 +48,25 @@ const EmailVerification = () => {
           </div>
         </div>
         <h1 className="text-xl font-semibold text-gray-700 text-center mb-4">Please check your email</h1>
-        <p className="text-sm text-gray-500 text-center mb-8">We've sent a code to contact@curfcode.com</p>
+        <p className="text-sm text-gray-500 text-center mb-8">We've sent a code to {email}</p>
         <div className="flex justify-between">
-          <Input className={inputStyle} maxLength={1} />
-          <Input className={inputStyle} maxLength={1} />
-          <Input className={inputStyle} maxLength={1} />
-          <Input className={inputStyle} maxLength={1} />
+          {/* Render input fields for verification code */}
+          {Array.from({ length: 4 }).map((_, index) => (
+            <Input
+              key={index}
+              className={inputStyle}
+              maxLength={1}
+              value={verificationCode[index]}
+              onChange={(e) => handleInputChange(index, e.target.value)}
+            />
+          ))}
         </div>
         <div className="flex justify-center mt-6">
-         
-          <Button type="primary" className="rounded-lg">Verify</Button>
+          {/* Button to trigger verification */}
+          <Button type="primary" className="rounded-lg" onClick={handleVerify}>
+            Verify
+          </Button>
         </div>
-       
       </div>
     </div>
   );
