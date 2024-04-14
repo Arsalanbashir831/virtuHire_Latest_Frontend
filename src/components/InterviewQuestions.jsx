@@ -26,7 +26,12 @@ const InterviewQuestions = () => {
     }
 
     try {
-      const response = await axios.get(`${QA_SERVER}/question_generation/${domain}`);
+      const response = await axios.get(`${QA_SERVER}/question_generation/${domain}`,{
+        headers:{
+          "ngrok-skip-browser-warning":true
+        }
+      });
+      console.log(response)
       setQuestions(response.data.questions);
       setCurrentQuestionIndex(0);
     } catch (error) {
@@ -76,7 +81,7 @@ const InterviewQuestions = () => {
         Fetch Questions
       </Button>
 
-      {questions.length > 0 && currentQuestionIndex < questions.length && (
+      {questions?.length > 0 && currentQuestionIndex < questions?.length && (
         <Card className="mb-4">
           <Title level={4}>Question {currentQuestionIndex + 1}</Title>
           <p className="mb-4">{questions[currentQuestionIndex]}</p>
@@ -86,7 +91,7 @@ const InterviewQuestions = () => {
         </Card>
       )}
 
-      {currentQuestionIndex === questions.length -1 && (
+      {currentQuestionIndex === questions?.length -1 && (
         <Button type="primary" onClick={() => navigate('/feedback', { state: { feedback } })}>
           View Feedback
         </Button>

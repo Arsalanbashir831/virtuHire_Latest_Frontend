@@ -6,6 +6,7 @@ import animationData from '../assets/applyAnime.json'; // Your Lottie animation 
 import { NLP_SERVER,BASE_URL } from '../utils';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom'
+
 const { Option } = Select;
 
 
@@ -55,6 +56,7 @@ const JobPost = () => {
   };
 
   const jdParsing = async (file) => {
+   setIsLoading(true)
     try {
       const formData = new FormData();
       formData.append("job_pdf", file);
@@ -63,7 +65,7 @@ const JobPost = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-
+     
       setParsedData({
         experience: jdParserResponse.data.ParsedData.entity['Experience'],
         education :jdParserResponse.data.ParsedData.entity['Education'],
@@ -72,12 +74,15 @@ const JobPost = () => {
         title: jdParserResponse.data.ParsedData.entity['Job Title'] ,
         company: jdParserResponse.data.ParsedData.entity['company'] ,
       });
+      setIsLoading(false)
     } catch (e) {
+      setIsLoading(false)
       console.log(e);
     }
   };
 
   const onFileChange = (file) => {
+   
     setJobDescription(file.fileList[0].originFileObj);
     jdParsing(file.fileList[0].originFileObj);
   };
@@ -90,10 +95,13 @@ const JobPost = () => {
     }));
   };
 
+  
+
   console.log(parsedData.title);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
+ 
       <Card className="w-full shadow-md rounded-lg">
         <div className="flex justify-center items-center p-6">
           <div className="mr-6">
@@ -238,7 +246,9 @@ const JobPost = () => {
 
               {/* Repeat similar pattern for other fields */}
               
-              <Button type="primary" htmlType="submit" className="w-full">
+              <Button
+              loading = {isLoading}
+               type="primary" htmlType="submit" className="w-full">
                 Add Job
               </Button>
             </form>
