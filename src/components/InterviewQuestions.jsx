@@ -6,7 +6,6 @@ import { selectedTextArea } from '../atoms/AnswerState';
 import { useNavigate } from 'react-router-dom';
 import { Input, Button, Card, Typography } from 'antd';
 
-
 const { TextArea } = Input;
 const { Title } = Typography;
 
@@ -28,12 +27,13 @@ const InterviewQuestions = () => {
     try {
       const response = await axios.get(`${QA_SERVER}/question_generation/${domain}`,{
         headers:{
-          "ngrok-skip-browser-warning":true
+          "ngrok-skip-browser-warning": true
         }
       });
       console.log(response)
       setQuestions(response.data.questions);
       setCurrentQuestionIndex(0);
+      setFeedback([]); // Reset feedback when fetching new questions
     } catch (error) {
       console.error('Error fetching questions:', error);
     }
@@ -53,6 +53,7 @@ const InterviewQuestions = () => {
 
   const handleRestartInterview = () => {
     setCurrentQuestionIndex(0);
+    setFeedback([]); // Optionally reset feedback on restart
   };
 
   const submitAnswer = async () => {
@@ -91,7 +92,7 @@ const InterviewQuestions = () => {
         </Card>
       )}
 
-      {currentQuestionIndex === questions?.length -1 && (
+      {feedback.length === questions.length && (
         <Button type="primary" onClick={() => navigate('/feedback', { state: { feedback } })}>
           View Feedback
         </Button>
