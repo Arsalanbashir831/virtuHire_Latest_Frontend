@@ -22,27 +22,24 @@ const App = () => {
   const hideNavBarPaths = ['/login', '/signup', '/otp'];
   const shouldHideNavBar = hideNavBarPaths.includes(location.pathname);
 
-  console.log(isAuthenticated);
-  if (loading) {
-    return <div>Loading...</div>; // Or any loading spinner
-  }
+  
 
   return (
     <>
       {!shouldHideNavBar && <ResponsiveNavBar />}
       <Routes>
-        <Route path="/" element={isAuthenticated ? <Home /> : <Navigate to="/login" replace />} />
+        <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        <Route path="/EasyApply" element={isAuthenticated ? <EasyApply /> : <Navigate to="/login" replace />} />
-        <Route path="/applied" element={isAuthenticated ? <AppliedJobs /> : <Navigate to="/login" replace />} />
-        <Route path="/hire" element={isAuthenticated ? <Hire /> : <Navigate to="/login" replace />} />
-        <Route path="/jobpost" element={isAuthenticated ? <JobPost /> : <Navigate to="/login" replace />} />
-        <Route path="/profile" element={isAuthenticated ? <Profile /> : <Navigate to="/login" replace />} />
-        <Route path="/AIQA" element={isAuthenticated ? <AIQA /> : <Navigate to="/login" replace />} />
-        <Route path="/feedback" element={isAuthenticated ? <Feedback /> : <Navigate to="/login" replace />} />
+        <Route path="/EasyApply" element={ <EasyApply />} />
+        <Route path="/applied" element={ <AppliedJobs /> } />
+        <Route path="/hire" element={ <Hire /> } />
+        <Route path="/jobpost" element={ <JobPost /> } />
+        <Route path="/profile" element={ <Profile /> } />
+        <Route path="/AIQA" element={ <AIQA /> } />
+        <Route path="/feedback" element={ <Feedback /> } />
         <Route path="/otp" element={<EmailVerification />} />
-        <Route path="/candidateRecommendation" element={isAuthenticated ? <CandidateRecommender /> : <Navigate to="/login" replace />} />
+        <Route path="/candidateRecommendation" element={ <CandidateRecommender /> } />
       </Routes>
     </>
   );
