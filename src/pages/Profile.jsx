@@ -21,6 +21,10 @@ const handleOk = async (values) => {
     // Append the file to the formData if it exists
     if (values.profile) {
       formData.append('profile', values.profile.fileList[0].originFileObj);
+      formData.append('first_name', userData.first_name);
+      formData.append('last_name', userData.last_name);
+      formData.append('email', userData.email);
+      formData.append('is_verified', userData.is_verified);
     }
     try {
       await axios.put(url, formData, {

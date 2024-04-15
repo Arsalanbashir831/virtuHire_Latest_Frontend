@@ -1,31 +1,31 @@
+// customhooks/useUserData.js
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { BASE_URL } from '../utils';
 
 const useUserData = () => {
-    const [userData, setUserData] = useState(null); // State to store user data
+  const [userData, setUserData] = useState(null);
 
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        const fetchUserData = async () => {
-            try {
-                const response = await axios.get(`${BASE_URL}/auth_user`, {
-                    headers: {
-                        Authorization: `Token ${token}` // Include token in Authorization header
-                    }
-                });
-                setUserData(response.data); // Set the user data in state
-            } catch (error) {
-                console.error('Error fetching user data:', error);
-            }
-        };
-
-        if (token) {
-            fetchUserData(); // Fetch user data if token is available
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get(`${BASE_URL}/auth_user`, {
+            headers: { Authorization: `Token ${token}` }
+          });
+          setUserData(response.data);
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          setUserData(null); // Reset user data on error
         }
+      };
 
-    }, []);
-return userData
+      fetchUserData();
+    }
+  }, []);
+
+  return userData;
 };
 
 export default useUserData;
