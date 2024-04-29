@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Card, Tag } from "antd";
 import { ClockCircleOutlined } from "@ant-design/icons";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { selectedJobState } from "../atoms/JobState";
 import axios from "axios";
 import { BASE_URL } from "../utils";
+import { searchState } from "../atoms/SearchState";
+import { LocationFilterState } from "../atoms/LocationFilterState";
+import { jobTypeState } from "../atoms/JobTypeLocationState";
+
 
 
 
@@ -39,7 +43,12 @@ const JobList = ({isRecruiter}) => {
   const [selectedJob, setSelectedJob] = useRecoilState(selectedJobState);
   const authToken = localStorage.getItem("token");
   const userId = localStorage.getItem('userId')
-  useEffect(() => {
+const querySearch = useRecoilValue(searchState)
+const queryLocation = useRecoilValue(LocationFilterState)
+const queryJobTypeState = useRecoilValue(jobTypeState)
+// console.log(queryLocation,queryJobTypeState)
+
+useEffect(() => {
     const fetchJobs = async () => {
       const config = {
         headers: {
@@ -47,21 +56,20 @@ const JobList = ({isRecruiter}) => {
         },
       };
       try {
-        const response = await axios.get(`${BASE_URL}/job`, config);
-        console.log(response.data);
-        let  filteredJobs=null
-        if (isRecruiter === false) {
-          filteredJobs = response.data.filter((job) => userId != job.recruiter_details.id);
+        if (isRecruiter===true) {
+           const response = await axios.get(`${BASE_URL}/job/posted_by_recruiter`, config)
+          setJobResponse(response.data);
         }else{
-          filteredJobs = response.data.filter((job) => userId == job.recruiter_details.id);
-        } 
-        setJobResponse(filteredJobs);
+           const response = await axios.get(`${BASE_URL}/job?search=${querySearch}&location=${queryLocation}&type=${queryJobTypeState}`, config);
+          setJobResponse(response.data);
+        }
+    
       } catch (error) {
         console.log(error);
       }
     };
     fetchJobs();
-  }, []);
+  }, [jobResponse,queryLocation,queryJobTypeState]);
 
   const handleCardClick = (job) => {
     setSelectedJob(job);
