@@ -15,6 +15,7 @@ import CandidateRecommender from './pages/CandidateRecommender';
 import AIQA from './pages/AIQA';
 import Feedback from './pages/Feedback';
 import { useAuth } from './context/AuthContext';
+import ChatRoom from './pages/ChatRoom';
 
 const App = () => {
   const { isAuthenticated, loading } = useAuth();
@@ -40,6 +41,7 @@ const App = () => {
         <Route path="/feedback" element={ <Feedback /> } />
         <Route path="/otp" element={<EmailVerification />} />
         <Route path="/candidateRecommendation" element={ <CandidateRecommender /> } />
+        <Route path="/chats" element={ <ChatRoom /> } />
       </Routes>
     </>
   );

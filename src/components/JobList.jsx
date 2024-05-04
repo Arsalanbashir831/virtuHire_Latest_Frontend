@@ -42,25 +42,26 @@ const JobList = ({isRecruiter}) => {
   const [jobResponse, setJobResponse] = useState(null);
   const [selectedJob, setSelectedJob] = useRecoilState(selectedJobState);
   const authToken = localStorage.getItem("token");
-  const userId = localStorage.getItem('userId')
 const querySearch = useRecoilValue(searchState)
 const queryLocation = useRecoilValue(LocationFilterState)
 const queryJobTypeState = useRecoilValue(jobTypeState)
-// console.log(queryLocation,queryJobTypeState)
+let jobResUrl=`${BASE_URL}/job?search=${querySearch}&location=${queryLocation}&type=${queryJobTypeState}`
 
 useEffect(() => {
     const fetchJobs = async () => {
       const config = {
         headers: {
-          Authorization: `Token ${authToken}`,
+          Authorization: `Token ${authToken}`
         },
+        
       };
       try {
         if (isRecruiter===true) {
            const response = await axios.get(`${BASE_URL}/job/posted_by_recruiter`, config)
           setJobResponse(response.data);
         }else{
-           const response = await axios.get(`${BASE_URL}/job?search=${querySearch}&location=${queryLocation}&type=${queryJobTypeState}`, config);
+         
+          const response = await axios.get(jobResUrl, config);
           setJobResponse(response.data);
         }
     
@@ -69,7 +70,8 @@ useEffect(() => {
       }
     };
     fetchJobs();
-  }, [jobResponse,queryLocation,queryJobTypeState]);
+  }, [jobResUrl]);
+  //jobResponse,queryLocation,queryJobTypeState
 
   const handleCardClick = (job) => {
     setSelectedJob(job);

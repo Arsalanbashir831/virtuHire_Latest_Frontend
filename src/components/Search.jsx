@@ -12,9 +12,9 @@ const { Option } = Select;
 const ResponsiveSearchBar = () => {
   const [search, setSearch] = useRecoilState(searchState);
   const setSelectedJob = useSetRecoilState(selectedJobState);
-  const [jobType ,setJobType]= useRecoilState(jobTypeState)
-  const [location ,setLocation] = useRecoilState(LocationFilterState)
-  // Define a function to handle search
+  const [jobType, setJobType] = useRecoilState(jobTypeState);
+  const [location, setLocation] = useRecoilState(LocationFilterState);
+
   const handleSearch = (value) => {
     setSearch(value);
     setSelectedJob(null);
@@ -23,48 +23,57 @@ const ResponsiveSearchBar = () => {
 
   const handleFilterJobType = (value) => {
     console.log('Filtering by job type:', value);
-    setJobType(value)
-    // Perform filtering actions or update state accordingly
+    setSelectedJob(null);
+    setJobType(value);
   };
 
-  // Define function to handle location filter selection
   const handleFilterLocation = (value) => {
     console.log('Filtering by location:', value);
-    setLocation(value)
-    // Perform filtering actions or update state accordingly
+    setSelectedJob(null);
+    setLocation(value);
   };
 
   return (
-    <div className="flex justify-center my-4 w-full">
+    <div className="flex justify-center items-center my-4 w-full md:w-[80%] mx-auto rounded-lg bg-white shadow-md p-4">
+
+      {/* Search Input */}
       <Search
         placeholder="Search Jobs"
-        size="large"
-        className="rounded-r-lg "
+        enterButton={
+          <Button
+            type="primary"
+            className="bg-green-500 hover:bg-green-600 text-white"
+          >
+            Search
+          </Button>
+        }
         onSearch={handleSearch}
-        style={{ width: '60%' }}
+        className="mr-4 flex-grow"
       />
-      <div className="ml-4 flex items-center">
-        <Select
-          placeholder="Select Job Type"
-          style={{ width: 150 }}
-          onChange={handleFilterJobType}
-        >
-          <Option value="freelance">Freelance</Option>
-          <Option value="contract">Contract</Option>
-          <Option value="full time">Full Time</Option>
-          <Option value="part time">Part Time</Option>
-        </Select>
-      </div>
-      <div className="ml-4 flex items-center">
-        <Select
-          placeholder="Select Location"
-          style={{ width: 150 }}
-          onChange={handleFilterLocation}
-        >
-          <Option value="on site">On Site</Option>
-          <Option value="remote">Remote</Option>
-        </Select>
-      </div>
+
+      {/* Job Type Selector */}
+      <Select
+        placeholder="Select Job Type"
+        style={{ width: 150 }}
+        onChange={handleFilterJobType}
+        className="mr-4"
+      >
+        <Option value="freelance">Freelance</Option>
+        <Option value="contract">Contract</Option>
+        <Option value="full time">Full Time</Option>
+        <Option value="part time">Part Time</Option>
+      </Select>
+
+      {/* Location Selector */}
+      <Select
+        placeholder="Select Location"
+        style={{ width: 150 }}
+        onChange={handleFilterLocation}
+      >
+        <Option value="on site">On Site</Option>
+        <Option value="remote">Remote</Option>
+      </Select>
+
     </div>
   );
 };
