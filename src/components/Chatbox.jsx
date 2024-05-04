@@ -13,7 +13,7 @@ const Chatbox = () => {
   useEffect(() => {
     if (!receiverId) return;
   
-    const wsClient = new WebSocket(`${WEB_SOCKET_URL}/ws/socket-server/?token=${localStorage.getItem('token')}`);
+    const wsClient = new WebSocket(`${WEB_SOCKET_URL}/?token=${localStorage.getItem('token')}`);
     ws.current = wsClient;
   
     wsClient.onopen = () => {
@@ -29,6 +29,15 @@ const Chatbox = () => {
       const data = JSON.parse(e.data);
       if (data.status === 'success' && data.messages) {
         setMessages(data.messages);
+        console.log(messages);
+      }
+
+      if (data.message){
+        console.log(data)
+        console.log(messages);
+        data['content'] = data['message']
+
+        setMessages((prev)=>[...prev, data])
       }
     };
   
@@ -56,11 +65,13 @@ const Chatbox = () => {
         timestamp: new Date().toISOString(),
       };
 
-      setMessages(prevMessages => [...prevMessages, newMessage]);
+      
 
+      console.log(input);
       ws.current.send(JSON.stringify({
         command: 'send_message',
         receiver_id: receiverId,
+        sender_id: userId,
         message: input,
       }));
 
@@ -72,8 +83,8 @@ const Chatbox = () => {
     <div className="p-4 h-screen flex flex-col">
       <div className="flex-grow overflow-y-auto">
         {messages.map(msg => (
-          <div key={msg.id} className={`flex ${msg.sender_id === parseInt(userId) ? 'justify-end' : 'justify-start'}`}>
-            <div className={`p-2 text-white max-w-xs mx-2 my-1 rounded-lg ${msg.sender_id === parseInt(userId) ? 'bg-blue-500' : 'bg-gray-500'}`}>
+          <div key={msg.id} className={`flex ${parseInt(msg.sender_id) === parseInt(userId) ? 'justify-end' : 'justify-start'}`}>
+            <div className={`p-2 text-white max-w-xs mx-2 my-1 rounded-lg ${parseInt(msg.sender_id) === parseInt(userId) ? 'bg-blue-500' : 'bg-gray-500'}`}>
               {msg.content}
               <div className="text-xs text-gray-200 text-right">{new Date(msg.timestamp).toLocaleTimeString()}</div>
             </div>

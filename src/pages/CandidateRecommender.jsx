@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Table, Button, Typography } from "antd";
+import React, { useEffect, useState,useRef } from "react";
+import { Table, Button, Typography, Modal, Input } from "antd";
 import axios from "axios";
-import { BASE_URL } from "../utils";
+import { BASE_URL, WEB_SOCKET_URL } from "../utils";
 import { useLocation , useNavigate } from "react-router-dom";
+import { useRecoilValue,useSetRecoilState } from "recoil";
+import { selectedChatState } from "../atoms/ChatState";
 
 
 const { Title } = Typography;
@@ -10,12 +12,21 @@ const { Title } = Typography;
 
 
 const CandidateRecommender = () => {
+  const ws = useRef(null);
     const location = useLocation();
+    const navigation = useNavigate()
+    const setChatCandidate = useSetRecoilState(selectedChatState)
     const {jobId} = location.state; 
     const token = localStorage.getItem('token');
     const [candidateResponse, setCandidateResponse] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [message, setMessage] = useState('');
+    const [selectedCandidate, setSelectedCandidate] = useState(null);
+  
     
-   
+    const wsClient = new WebSocket(`${WEB_SOCKET_URL}/?token=${localStorage.getItem('token')}`);
+    ws.current = wsClient;
+
     useEffect(() => {
         
         const fetchCandidate = async () => {
@@ -36,6 +47,35 @@ const CandidateRecommender = () => {
 
   
     }, [token]); 
+
+
+    const handleHiring = (record) => {
+      wsClient.onopen = () => {
+        console.log('WebSocket Connected');
+      };
+      setSelectedCandidate(record.candidate);
+      setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+      console.log('Sending Message:', message, 'to', selectedCandidate);
+      wsClient.send(JSON.stringify({
+        command: "send_message",
+        receiver_id: selectedCandidate,
+        sender_id:localStorage.getItem('userId'),
+        message:message
+      }));
+      setIsModalVisible(false);
+      setMessage('');
+      navigation('/chats')
+      setChatCandidate(selectedCandidate)
+  };
+
+  const handleCancel = () => {
+      setIsModalVisible(false);
+      setMessage('');
+  };
+
 
   
   
@@ -91,7 +131,7 @@ const CandidateRecommender = () => {
             onClick={() => window.open(record.resume, "_blank")} >
             View Resume
           </Button>
-          <Button type="primary" onClick={() => console.log("Hire", record)}>
+          <Button type="primary" onClick={()=>handleHiring(record)}>
             Hire
           </Button>
           <Button danger onClick={() => console.log("Rejected", record)}>
@@ -104,17 +144,20 @@ const CandidateRecommender = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-4">
-      <div className="mb-8">
-        <Title level={2}>Candidate Recommendation</Title>
-      </div>
-      <Table
-        dataSource={candidateResponse}
-        columns={columns}
-        pagination={true}
-        className="w-full "
-      />
+        <div className="mb-8">
+            <Title level={2}>Candidate Recommendation</Title>
+        </div>
+        <Table
+            dataSource={candidateResponse}
+            columns={columns}
+            pagination={true}
+            className="w-full"
+        />
+        <Modal title="Send a Message to Candidate" visible={isModalVisible} onOk={handleOk} onCancel={handleCancel}>
+            <Input.TextArea value={message} onChange={(e) => setMessage(e.target.value)} placeholder="Write your message here..." rows={4} />
+        </Modal>
     </div>
-  );
+);
 };
 
 export default CandidateRecommender;

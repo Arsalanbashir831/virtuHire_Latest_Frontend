@@ -38,7 +38,7 @@ const SignupPage = () => {
         const { confirmPassword, ...data } = formData
         const registeration = await axios.post(`${BASE_URL}/signup`,data)
         if (registeration.status === 201) {
-          navigate('/otp', { state: { email: email } });
+          navigate('/otp', { state: { email: email , origin:'signup' } });
         } else {
           console.log('failed');
         }
