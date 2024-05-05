@@ -4,8 +4,8 @@ import Chatbox from '../components/Chatbox';
 
 const ChatRoom = () => {
   return (
-    <div className="flex h-screen">
-      <div className="w-1/4 bg-white border-r">
+    <div className="flex  ">
+      <div className="w-1/4 border-r  bg-gray-200 p-4 overflow-y-scroll">
         <UsersList />
       </div>
       <div className="flex-1 bg-gray-100">

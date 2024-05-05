@@ -3,8 +3,8 @@ import { Table, Button, Typography, Modal, Input } from "antd";
 import axios from "axios";
 import { BASE_URL, WEB_SOCKET_URL } from "../utils";
 import { useLocation , useNavigate } from "react-router-dom";
-import { useRecoilValue,useSetRecoilState } from "recoil";
-import { selectedChatState } from "../atoms/ChatState";
+import {useSetRecoilState} from "recoil";
+import {selectedChatState} from "../atoms/ChatState";
 
 
 const { Title } = Typography;

@@ -9,7 +9,9 @@ import { selectedChatState } from '../atoms/ChatState';
 const UsersList = () => {
   const authToken = localStorage.getItem('token');
   const [users, setUsers] = useState([]);
-  const [selectUser , setSelectUser]= useRecoilState(selectedChatState)
+  const [selectedUserId, setSelectedUserId] = useState(null); // State to track selected user ID
+  const [selectUser, setSelectUser] = useRecoilState(selectedChatState);
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -26,21 +28,28 @@ const UsersList = () => {
 
     fetchUsers();
   }, []);
-  const handleUserClick = (userId) => {
-    setSelectUser(userId)
+
+  const handleUserClick = (user) => {
+  // console.log(user);
+    setSelectUser(user);
+    setSelectedUserId(user.id); // Set the selected user ID in state
   };
+
   return (
     <div className="container mx-auto mt-5">
       <List
         itemLayout="horizontal"
         dataSource={users}
         renderItem={user => (
-          <List.Item   onClick={() => handleUserClick(user.id)}
-            className="cursor-pointer hover:bg-gray-100 p-2 rounded-md">
+          <List.Item
+            onClick={() => handleUserClick(user)}
+            className={` cursor-pointer p-2 rounded-md my-5  hover:bg-gray-100 ${selectedUserId === user.id ? 'bg-gray-100 shadow-md' : 'bg-white'}`}
+          >
             <List.Item.Meta 
-              avatar={<Avatar src={user.avatar || null} icon={!user.avatar ? <UserOutlined /> : null} />}
+              avatar={<Avatar src={user.profile || null} icon={!user.profile ? <UserOutlined /> : null} />}
               title={user.username}
-              description={`Last active: ${user.last_active || 'unknown'}`}
+              description={`${user.first_name}${' '}${user.last_name}`}
+              className='px-2'
             />
           </List.Item>
         )}
