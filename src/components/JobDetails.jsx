@@ -9,6 +9,8 @@ import {
 import { useRecoilValue ,useSetRecoilState} from "recoil";
 import { selectedJobState } from "../atoms/JobState";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { BASE_URL } from "../utils";
 function stringToList(inputString) {
  
   if (!inputString || typeof inputString !== 'string') {
@@ -27,6 +29,19 @@ export const JobDetail = ({isRecruiter}) => {
   const navigate = useNavigate();
   const selectedJob = useRecoilValue(selectedJobState);
   const setSelectedJob = useSetRecoilState(selectedJobState);
+  const authToken = localStorage.getItem('token')
+  const handleDelete = async ()=>{
+    try {
+       await axios.delete(`${BASE_URL}/job/${selectedJob.id}/delete_posted_by_recruiter`,{
+        headers:{
+          Authorization:`Token ${authToken}`
+        }
+       })
+       setSelectedJob(null)
+    } catch (error) {
+      console.log(error);
+    }
+  }
 useEffect(()=>{
   setSelectedJob(null)
 },[])
@@ -132,7 +147,7 @@ useEffect(()=>{
             </div>
 
             </>:<>
-            <DeleteOutlined className="text-red-500 cursor-pointer" />
+            <DeleteOutlined onClick={handleDelete} className="text-red-500 cursor-pointer" />
             </>}
           </div>
         </div>

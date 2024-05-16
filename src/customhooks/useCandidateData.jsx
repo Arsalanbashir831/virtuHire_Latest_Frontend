@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 const useCandidateData = (url) => {
     const [candidateData, setCandidateData] = useState(null); 
-
+    
     useEffect(() => {
         const token = localStorage.getItem('token');
         const fetchCandidateData = async () => {

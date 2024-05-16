@@ -11,6 +11,7 @@ const navLinks = [
   { name: 'Applied Job', href: '/applied' },
   { name: 'Hire', href: '/hire' },
   { name: 'AI Interview', href: '/AIQA' },
+  {name :"Chats" , href:'/chats'}
 ];
 
 // Define user dropdown menu items
