@@ -7,7 +7,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 // Define navigation links
 const navLinks = [
-  { name: 'Home', href: '/' },
+  { name: 'Jobs', href: '/jobs' },
   { name: 'Applied Job', href: '/applied' },
   { name: 'Hire', href: '/hire' },
   { name: 'AI Interview', href: '/AIQA' },
@@ -68,7 +68,7 @@ const ResponsiveNavBar = () => {
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <img src={companyLogo} alt="Company Logo" className="w-24 h-auto mr-4" />
+            <Link to={'/'}>   <img src={companyLogo} alt="Company Logo" className="w-24 h-auto mr-4" /></Link>
             <div className="hidden md:flex space-x-1">
               {navLinks.map((link) => (
                 <NavLink key={link.name} name={link.name} href={link.href} />

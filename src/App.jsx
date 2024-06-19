@@ -18,6 +18,7 @@ import { useAuth } from './context/AuthContext';
 import ChatRoom from './pages/ChatRoom';
 import ForgetPassword from './pages/ForgetPassword';
 import NewPassword from './pages/NewPassword';
+import LandingPage from './pages/LandingPage';
 
 const App = () => {
   const { isAuthenticated, loading } = useAuth();
@@ -31,7 +32,8 @@ const App = () => {
     <>
       {!shouldHideNavBar && <ResponsiveNavBar />}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/jobs" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/forget" element={<ForgetPassword />} />
