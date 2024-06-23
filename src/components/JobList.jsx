@@ -8,7 +8,7 @@ import { BASE_URL } from "../utils";
 import { searchState } from "../atoms/SearchState";
 import { LocationFilterState } from "../atoms/LocationFilterState";
 import { jobTypeState } from "../atoms/JobTypeLocationState";
-
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -46,7 +46,7 @@ const querySearch = useRecoilValue(searchState)
 const queryLocation = useRecoilValue(LocationFilterState)
 const queryJobTypeState = useRecoilValue(jobTypeState)
 let jobResUrl=`${BASE_URL}/job?search=${querySearch}&location=${queryLocation}&type=${queryJobTypeState}`
-
+const navigation = useNavigate()
 useEffect(() => {
     const fetchJobs = async () => {
       const config = {
@@ -65,8 +65,8 @@ useEffect(() => {
           setJobResponse(response.data);
         }
     
-      } catch (error) {
-        console.log(error);
+      } catch (error) { 
+        navigation('/login')
       }
     };
     fetchJobs();

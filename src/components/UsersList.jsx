@@ -5,13 +5,14 @@ import { UserOutlined } from '@ant-design/icons';
 import { BASE_URL } from '../utils';
 import { useRecoilState } from 'recoil';
 import { selectedChatState } from '../atoms/ChatState';
+import { useNavigate } from 'react-router-dom';
 
 const UsersList = () => {
   const authToken = localStorage.getItem('token');
   const [users, setUsers] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null); // State to track selected user ID
   const [selectUser, setSelectUser] = useRecoilState(selectedChatState);
-
+const navigate = useNavigate('/login')
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -23,6 +24,8 @@ const UsersList = () => {
         setUsers(response.data);
       } catch (error) {
         console.error('Failed to fetch users:', error);
+        navigate('/login')
+        
       }
     };
 

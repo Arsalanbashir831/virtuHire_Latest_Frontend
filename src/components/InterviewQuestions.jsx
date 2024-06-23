@@ -5,7 +5,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { selectedTextArea } from '../atoms/AnswerState';
 import { useNavigate } from 'react-router-dom';
 import { Input, Button, Card, Typography } from 'antd';
-const { TextArea } = Input;
+
 const { Title } = Typography;
 
 const InterviewQuestions = () => {
@@ -16,6 +16,7 @@ const InterviewQuestions = () => {
   const [feedback, setFeedback] = useState([]);
   const navigate = useNavigate();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  console.log(feedback);
 
   const fetchQuestions = async () => {
     if (domain.trim() === '') {
@@ -24,12 +25,12 @@ const InterviewQuestions = () => {
     }
 
     try {
-      const response = await axios.get(`${QA_SERVER}/question_generation/${domain}`,{
-        headers:{
+      const response = await axios.get(`${QA_SERVER}/question_generation/${domain}`, {
+        headers: {
           "ngrok-skip-browser-warning": true
         }
       });
-      console.log(response)
+      console.log(response);
       setQuestions(response.data.questions);
       setCurrentQuestionIndex(0);
       setFeedback([]); // Reset feedback when fetching new questions
@@ -61,9 +62,13 @@ const InterviewQuestions = () => {
         question: questions[currentQuestionIndex],
         user_answer: answer,
       });
-      setFeedback((prevFeedback) => [...prevFeedback, evaluation.data.response]);
+      const { score, feedback: feedbackText } = evaluation.data;
+      setFeedback((prevFeedback) => [
+        ...prevFeedback,
+        { question: questions[currentQuestionIndex], score, feedback: feedbackText }
+      ]);
       handleNextQuestion();
-      setAnswer('');
+      setAnswer(''); // Clear the answer from Recoil state
     } catch (error) {
       console.log(error);
     }

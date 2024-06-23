@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Modal, Button } from 'antd';
 import { BASE_URL } from '../utils';
+import { useNavigate } from 'react-router-dom';
 
 const AppliedJobs = () => {
   const [appliedResponse, setAppliedResponse] = useState([]);
@@ -9,7 +10,7 @@ const AppliedJobs = () => {
   const [selectedJob, setSelectedJob] = useState(null);
   const token = localStorage.getItem('token');
   const userId = localStorage.getItem('userId');
-
+const navigate = useNavigate()
   useEffect(() => {
     const fetchAppliedJobs = async () => {
       try {
@@ -20,6 +21,7 @@ const AppliedJobs = () => {
         });
         setAppliedResponse(response.data);
       } catch (error) {
+        navigate('/login')
         console.error('Error fetching applied jobs:', error);
       }
     };
